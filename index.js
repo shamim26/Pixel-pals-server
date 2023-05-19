@@ -64,11 +64,16 @@ async function run() {
     });
 
     // get data by email
-    app.get("/myToys/:email", async (req, res) => {
+    app.get("/myToys", async (req, res) => {
+      const { email, param } = req.query;
+
       const query = {
-        sellerEmail: req.params.email,
+        sellerEmail: email,
       };
-      const result = await toysCollection.find(query).toArray();
+      const result = await toysCollection
+        .find(query)
+        .sort({ price: parseInt(param) })
+        .toArray();
       res.send(result);
     });
 
