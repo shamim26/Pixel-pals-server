@@ -44,11 +44,19 @@ async function run() {
       res.send(result);
     });
     //get a single data
-    app.get('/toys/:id', async (req, res) =>{
-        const id = req.params.id;
-        const result = await toysCollection.findOne({_id: new ObjectId(id)})
-        res.send(result)
-    })
+    app.get("/toys/:id", async (req, res) => {
+      const id = req.params.id;
+      const result = await toysCollection.findOne({ _id: new ObjectId(id) });
+      res.send(result);
+    });
+    // filter by category
+    app.get("/toysByCategory/:category", async (req, res) => {
+      const category = req.params.category;
+      const result = await toysCollection
+        .find({ category: category })
+        .toArray();
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
