@@ -58,11 +58,20 @@ async function run() {
       res.send(result);
     });
 
+    // get data by email
+    app.get("/myToys/:email", async (req, res) => {
+      const query = {
+        sellerEmail: req.params.email
+      };
+      const result = await toysCollection.find(query).toArray();
+      res.send(result);
+    });
+
     // add data to DB
     app.post("/post-toy", async (req, res) => {
       const body = req.body;
       const result = await toysCollection.insertOne(body);
-      res.send(result)
+      res.send(result);
     });
 
     // Send a ping to confirm a successful connection
