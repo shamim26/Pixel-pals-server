@@ -27,12 +27,15 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
+    // collection
     const toysCollection = client.db("pixelDB").collection("toys");
+
     // get all data
     app.get("/toys", async (req, res) => {
       const result = await toysCollection.find({}).limit(20).toArray();
       res.send(result);
     });
+
     // search by name
     app.get("/getToys/:text", async (req, res) => {
       const text = req.params.text;
@@ -43,12 +46,14 @@ async function run() {
         .toArray();
       res.send(result);
     });
+
     //get a single data
     app.get("/toys/:id", async (req, res) => {
       const id = req.params.id;
       const result = await toysCollection.findOne({ _id: new ObjectId(id) });
       res.send(result);
     });
+
     // filter by category
     app.get("/toysByCategory/:category", async (req, res) => {
       const category = req.params.category;
@@ -61,7 +66,7 @@ async function run() {
     // get data by email
     app.get("/myToys/:email", async (req, res) => {
       const query = {
-        sellerEmail: req.params.email
+        sellerEmail: req.params.email,
       };
       const result = await toysCollection.find(query).toArray();
       res.send(result);
@@ -75,10 +80,10 @@ async function run() {
     });
 
     // update data
-    app.put('/updateToys/:id', async (req, res) =>{
-      const id = req.params.id
+    app.put("/updateToys/:id", async (req, res) => {
+      const id = req.params.id;
       const body = req.body;
-      const filter = {_id: new ObjectId(id)}
+      const filter = { _id: new ObjectId(id) };
       const updateDoc = {
         $set: {
           price: body.price,
@@ -86,9 +91,16 @@ async function run() {
           description: body.description,
         },
       };
-      const result = await toysCollection.updateOne(filter, updateDoc)
-      res.send(result)
-    })
+      const result = await toysCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
+
+    // delete data
+    app.delete("/myToys/:id", async (req, res) => {
+      const id = req.params.id;
+      const result = toysCollection.deleteOne({ _id: new ObjectId(id) });
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
